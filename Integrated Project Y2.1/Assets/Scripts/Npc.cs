@@ -43,11 +43,16 @@ public class Npc : MonoBehaviour
     /// Score value to be added when the player interacts with this NPC
     /// </summary>
     public int scoreValue = 1;
+    /// <summary>
+    /// GameManager instance to manage game state and interactions
+    /// </summary>
+    GameManager gameManager;
 
     void Awake()
     {
         myAgent = GetComponent<NavMeshAgent>(); // Get the NavMeshAgent component attached to this NPC
         currentLocationIndex = 0; // Initialize the current location index
+        gameManager = FindObjectOfType<GameManager>(); // Find the GameManager in the scene
     }
 
     void Start()
@@ -95,6 +100,11 @@ public class Npc : MonoBehaviour
                 // Go to next location in the route
                 if (currentLocationIndex == locations.Length - 1)
                 {
+                    gameManager.npcInGame--; // Decrement the NPC count in the game
+                    if (stolen)
+                    {
+                        gameManager.thievesNotCaught++; // Increment the count of thieves not caught
+                    }
                     Destroy(gameObject); // Destroy NPC if reached the last location
                     Debug.Log("NPC reached the last location and is being destroyed.");
                 }
@@ -146,7 +156,7 @@ public class Npc : MonoBehaviour
     {
         // Generate a random number to determine if the item is stolen
         float randomChance = Random.Range(0f, 1f);
-        if (randomChance < .1f) // 10% chance to steal
+        if (randomChance < .5f) // 5% chance to steal
         {
             stolen = true; // Set the stolen flag to true
             Debug.Log("Item has been stolen!");
@@ -155,7 +165,6 @@ public class Npc : MonoBehaviour
         }
         else
         {
-            Debug.Log("Item not stolen, continuing shopping.");
             StartCoroutine(SwitchState("Idle")); // Switch to idle state if item is not stolen
         }
     }
@@ -167,7 +176,6 @@ public class Npc : MonoBehaviour
     /// <param name="other"></param>
     void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Trigger entered with: " + other.gameObject.name);
         if (other.gameObject.CompareTag("Location") || other.gameObject.CompareTag("Neutral")) // Check if the collided object is a location
         {
             Debug.Log("Reached location: " + other.transform.name);

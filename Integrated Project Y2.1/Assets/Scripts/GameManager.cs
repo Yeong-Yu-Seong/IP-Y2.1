@@ -43,7 +43,7 @@ public class GameManager : MonoBehaviour
     /// Number of NPCs currently in the game
     /// </summary>
     [SerializeField]
-    int npcInGame = 0;
+    public int npcInGame = 0;
     /// <summary>
     /// Array of locations for NPCs to walk to
     /// </summary>
@@ -53,6 +53,17 @@ public class GameManager : MonoBehaviour
     /// Total number of NPCs to spawn in the game
     /// </summary>
     int totalNpcToSpawn = 5;
+    /// <summary>
+    /// Flag to check if the game is over
+    /// </summary>
+    bool isGameOver = false;
+    /// <summary>
+    /// Current number of NPCs spawned in the game
+    /// </summary>
+    public int currentNpcCount = 0;
+    public TextMeshProUGUI thievesCaughtText;
+    public TextMeshProUGUI thievesNotCaughtText;
+    public int thievesNotCaught = 0;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -75,13 +86,24 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            Cursor.visible = false; // Hide the cursor when not in menu
-            Cursor.lockState = CursorLockMode.Locked; // Lock the cursor when not in menu
-            player.SetActive(true); // Enable the player GameObject when not in menu
             if (!isSpawning)
             {
                 isSpawning = true; // Set the flag to true to prevent multiple coroutines
                 StartCoroutine(SpawnNPCCoroutine()); // Start the NPC spawning coroutine
+            }
+            else if (isGameOver && npcInGame == 0)
+            {
+                uiManager.GameOverCanvas.enabled = true; // Show the game over canvas if no NPCs are in the game
+                thievesCaughtText.text = "Thieves Caught: " + currentScore.ToString(); // Update the caught thieves text
+                thievesNotCaughtText.text = "Thieves Not Caught: " + thievesNotCaught.ToString(); // Update the not caught thieves text
+                Cursor.visible = true; // Show the cursor when game is over
+                Cursor.lockState = CursorLockMode.None; // Unlock the cursor when game is over
+            }
+            else
+            {
+                Cursor.visible = false; // Hide the cursor when not in menu
+                Cursor.lockState = CursorLockMode.Locked; // Lock the cursor when not in menu
+                player.SetActive(true); // Enable the player GameObject when not in menu
             }
         }
         // Check if the player presses the Q key to go back to the main menu
@@ -123,17 +145,14 @@ public class GameManager : MonoBehaviour
     {
         while (true)
         {
-            if (npcInGame >= 10) // Limit the number of NPCs in the game to 10
+            if (currentNpcCount >= totalNpcToSpawn) // Stop spawning if the total number of NPCs has been reached
             {
-                yield return new WaitForSeconds(10f); // Wait before checking again
-                continue; // Skip spawning if limit is reached
-            }
-            if (npcInGame >= totalNpcToSpawn) // Stop spawning if the total number of NPCs has been reached
-            {
+                isGameOver = true; // Set the game over flag to true
                 yield break; // Exit the coroutine
             }
             SpawnNPC(); // Call the method to spawn a new NPC
             npcInGame++; // Increment the number of NPCs in the game
+            currentNpcCount++; // Increment the current NPC count
             yield return new WaitForSeconds(10f); // Wait for 10 seconds before spawning the next NPC
         }
     }

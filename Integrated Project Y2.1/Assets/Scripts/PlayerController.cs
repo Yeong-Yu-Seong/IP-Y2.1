@@ -70,6 +70,7 @@ public class PlayerController : MonoBehaviour
             {
                 Debug.Log("Interacting with NPC who has stolen an item.");
                 gameManager.UpdateScore(currentNpc.scoreValue); // Update score based on NPC's stolen item
+                gameManager.npcInGame--; // Decrement the NPC count in the game
                 Destroy(currentNpc.gameObject); // Remove NPC after interaction
             }
         }

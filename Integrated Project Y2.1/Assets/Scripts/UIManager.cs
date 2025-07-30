@@ -4,20 +4,13 @@ Description: Manages the UI elements and transitions between menus
 */
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 public class UIManager : MonoBehaviour
 {
     /// <summary>
     /// Canvas for the main menu
     /// </summary>
     public Canvas Menu;
-    /// <summary>
-    /// Button to start the game
-    /// </summary>
-    public Button StartButton;
-    /// <summary>
-    /// Button to open settings
-    /// </summary>
-    public Button SettingsButton;
     /// <summary>
     /// Panel for settings
     /// </summary>
@@ -30,11 +23,16 @@ public class UIManager : MonoBehaviour
     /// Canvas for the game UI
     /// </summary>
     public Canvas GameCanvas;
+    /// <summary>
+    /// Canvas for the game over screen
+    /// </summary>
+    public Canvas GameOverCanvas;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         Menu.enabled = true; // Enable the main menu canvas
         GameCanvas.enabled = false; // Disable the game canvas initially
+        GameOverCanvas.enabled = false; // Disable the game over canvas initially
     }
 
     // Update is called once per frame
@@ -81,5 +79,14 @@ public class UIManager : MonoBehaviour
         GameCanvas.enabled = false; // Hide the game canvas
         Cursor.visible = true; // Show the cursor
         Cursor.lockState = CursorLockMode.None; // Unlock the cursor
+    }
+
+    /// <summary>
+    /// This method is called when the Restart button is clicked.
+    /// It reloads the current scene to restart the game.
+    /// </summary>
+    public void Restart()
+    {
+        SceneManager.LoadScene(0); // Reload the current scene to restart the game
     }
 }
