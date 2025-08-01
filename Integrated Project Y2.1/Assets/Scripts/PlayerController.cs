@@ -46,7 +46,6 @@ public class PlayerController : MonoBehaviour
             // Check if the hit object is an NPC
             if (hitInfo.collider.gameObject.CompareTag("Npc"))
             {
-                Debug.Log("NPC detected: " + hitInfo.collider.gameObject.name);
                 isNpc = true; // Set the flag to true if an NPC is detected
                 currentNpc = hitInfo.collider.gameObject.GetComponent<Npc>(); // Get the Npc component from the hit object
             }

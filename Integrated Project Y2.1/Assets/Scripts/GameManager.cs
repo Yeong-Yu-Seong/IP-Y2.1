@@ -27,6 +27,10 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public GameObject npcPrefab;
     /// <summary>
+    /// Prefab for the child NPC that follows the main NPC
+    /// </summary>
+    public GameObject npcchildPrefab;
+    /// <summary>
     /// Spawn point for NPCs
     /// </summary>
     [SerializeField]
@@ -38,7 +42,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Flag to check if NPCs are currently spawning
     /// </summary>
-    bool isSpawning = false; 
+    bool isSpawning = false;
     /// <summary>
     /// Number of NPCs currently in the game
     /// </summary>
@@ -61,8 +65,17 @@ public class GameManager : MonoBehaviour
     /// Current number of NPCs spawned in the game
     /// </summary>
     public int currentNpcCount = 0;
+    /// <summary>
+    /// TextMeshProUGUI component to display the number of thieves caught
+    /// </summary>
     public TextMeshProUGUI thievesCaughtText;
+    /// <summary>
+    /// TextMeshProUGUI component to display the number of thieves not caught
+    /// </summary>
     public TextMeshProUGUI thievesNotCaughtText;
+    /// <summary>
+    /// Number of thieves not caught in the game
+    /// </summary>
     public int thievesNotCaught = 0;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -128,17 +141,21 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// This method spawns a new NPC at the specified spawn point.
     /// It assigns the locations for the NPC to navigate and increments the NPC count.
+    /// It also spawns a child NPC that will follow the newly spawned NPC.
     /// </summary>
     void SpawnNPC()
     {
         GameObject newNpc = Instantiate(npcPrefab, spawnPoint.position, spawnPoint.rotation); // Instantiate a new NPC at the spawn point
         newNpc.GetComponent<Npc>().locations = locations; // Assign the locations to the NPC
+        GameObject childnewNpc = Instantiate(npcchildPrefab, spawnPoint.position, spawnPoint.rotation); // Instantiate a new child NPC at the spawn point
+        childnewNpc.GetComponent<Children>().target = newNpc.transform;
+
     }
 
     /// <summary>
     /// This coroutine handles the spawning of NPCs in the game.
     /// It checks the number of NPCs in the game and spawns new ones at regular intervals.
-    /// It stops spawning when the total number of NPCs has been reached or if the limit of 10 NPCs is reached.
+    /// It stops spawning when the total number of NPCs has been reached or if the limit of 20 NPCs is reached.
     /// </summary>
     /// <returns></returns>
     IEnumerator SpawnNPCCoroutine()

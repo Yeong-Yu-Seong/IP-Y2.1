@@ -27,6 +27,7 @@ public class UIManager : MonoBehaviour
     /// Canvas for the game over screen
     /// </summary>
     public Canvas GameOverCanvas;
+    
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {

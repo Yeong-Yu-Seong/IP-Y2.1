@@ -90,13 +90,11 @@ public class Npc : MonoBehaviour
         reachedShopPoint = false; // Reset the flag at the start of walking
         currentLocation = locations[currentLocationIndex]; // Set the initial walking location
         myAgent.SetDestination(currentLocation.position); // Set the agent's destination to the current walking point
-        Debug.Log("Starting walking to " + currentLocationIndex);
         while (currentState == "Walking")
         {
             // Check if the NPC has reached the destination
             if (reachedShopPoint)
             {
-                Debug.Log("Reached shop point: " + currentLocationIndex);
                 // Go to next location in the route
                 if (currentLocationIndex == locations.Length - 1)
                 {
@@ -106,11 +104,14 @@ public class Npc : MonoBehaviour
                         gameManager.thievesNotCaught++; // Increment the count of thieves not caught
                     }
                     Destroy(gameObject); // Destroy NPC if reached the last location
-                    Debug.Log("NPC reached the last location and is being destroyed.");
                 }
                 else
                 {
                     currentLocationIndex += 1; // Set the next location index
+                    if (currentLocationIndex == 9 && stolen)
+                    {
+                        currentLocationIndex += 1; // Skip the next location if the item is stolen
+                    }
                 }
                 // Check if the current location is a shopable place or a neutral point
                 if (!currentLocation.CompareTag("Neutral"))
@@ -156,10 +157,9 @@ public class Npc : MonoBehaviour
     {
         // Generate a random number to determine if the item is stolen
         float randomChance = Random.Range(0f, 1f);
-        if (randomChance < .5f) // 5% chance to steal
+        if (randomChance < .05f) // 5% chance to steal
         {
             stolen = true; // Set the stolen flag to true
-            Debug.Log("Item has been stolen!");
             yield return new WaitForSeconds(10f); // Wait for 10 seconds before switching state
             StartCoroutine(SwitchState("Walking")); // Switch back to walking state
         }
@@ -178,8 +178,11 @@ public class Npc : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Location") || other.gameObject.CompareTag("Neutral")) // Check if the collided object is a location
         {
-            Debug.Log("Reached location: " + other.transform.name);
-            reachedShopPoint = true; // Set the flag to true when reaching a location
+            if (other.transform == currentLocation) // Check if the NPC reached the current location
+            {
+                reachedShopPoint = true; // Set the flag to true when reaching a location
+            }
+            
         }
     }
     /// <summary>
