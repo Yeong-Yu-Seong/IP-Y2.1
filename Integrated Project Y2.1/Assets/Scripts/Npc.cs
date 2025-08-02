@@ -47,6 +47,11 @@ public class Npc : MonoBehaviour
     /// GameManager instance to manage game state and interactions
     /// </summary>
     GameManager gameManager;
+    /// <summary>
+    /// Sound for when NPC exits the shop when stolen
+    /// </summary>
+    [SerializeField]
+    AudioClip exitSound;
 
     void Awake()
     {
@@ -182,7 +187,16 @@ public class Npc : MonoBehaviour
             {
                 reachedShopPoint = true; // Set the flag to true when reaching a location
             }
-            
+
+        }
+        else if (other.gameObject.CompareTag("Exit")) // Check if the collided object is an exit point
+        {
+            // Note: Need to find an audio source and haven't tested this yet
+            if (stolen) // Check if the NPC has stolen an item
+            {
+                Debug.Log("NPC has stolen an item and is exiting the shop.");
+                AudioSource.PlayClipAtPoint(exitSound, transform.position); // Play the exit sound if stolen
+            }
         }
     }
     /// <summary>

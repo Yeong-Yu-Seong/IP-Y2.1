@@ -17,19 +17,23 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Player GameObject reference
     /// </summary>
-    public GameObject player;
+    [SerializeField]
+    GameObject player;
     /// <summary>
     /// TextMeshProUGUI component to display the score
     /// </summary>
-    public TextMeshProUGUI scoreText;
+    [SerializeField]
+    TextMeshProUGUI scoreText;
     /// <summary>
     /// Prefab for the NPC to spawn
     /// </summary>
-    public GameObject npcPrefab;
+    [SerializeField]
+    GameObject npcPrefab;
     /// <summary>
     /// Prefab for the child NPC that follows the main NPC
     /// </summary>
-    public GameObject npcchildPrefab;
+    [SerializeField]
+    GameObject npcchildPrefab;
     /// <summary>
     /// Spawn point for NPCs
     /// </summary>
@@ -68,11 +72,13 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// TextMeshProUGUI component to display the number of thieves caught
     /// </summary>
-    public TextMeshProUGUI thievesCaughtText;
+    [SerializeField]
+    TextMeshProUGUI thievesCaughtText;
     /// <summary>
     /// TextMeshProUGUI component to display the number of thieves not caught
     /// </summary>
-    public TextMeshProUGUI thievesNotCaughtText;
+    [SerializeField]
+    TextMeshProUGUI thievesNotCaughtText;
     /// <summary>
     /// Number of thieves not caught in the game
     /// </summary>
@@ -95,22 +101,27 @@ public class GameManager : MonoBehaviour
             Cursor.lockState = CursorLockMode.None; // Unlock the cursor when in menu
             player.SetActive(false); // Disable the player GameObject when in menu
             isSpawning = false; // Reset the spawning flag when in menu
-            StopCoroutine(SpawnNPCCoroutine()); // Stop the NPC spawning coroutine if in menu
+            CancelInvoke("SpawnNPC"); // Stop invoking the SpawnNPC method if in menu
         }
         else
         {
-            if (!isSpawning)
+            if (!isSpawning) // Check if NPCs are not currently spawning
             {
                 isSpawning = true; // Set the flag to true to prevent multiple coroutines
-                StartCoroutine(SpawnNPCCoroutine()); // Start the NPC spawning coroutine
+                InvokeRepeating("SpawnNPC", 10f, 10f); // Start spawning NPCs at regular intervals
             }
-            else if (isGameOver && npcInGame == 0)
+            if (currentNpcCount >= totalNpcToSpawn) // Stop spawning if the total number of NPCs has been reached
             {
-                uiManager.GameOverCanvas.enabled = true; // Show the game over canvas if no NPCs are in the game
-                thievesCaughtText.text = "Thieves Caught: " + currentScore.ToString(); // Update the caught thieves text
-                thievesNotCaughtText.text = "Thieves Not Caught: " + thievesNotCaught.ToString(); // Update the not caught thieves text
-                Cursor.visible = true; // Show the cursor when game is over
-                Cursor.lockState = CursorLockMode.None; // Unlock the cursor when game is over
+                isGameOver = true; // Set the game over flag to true
+                CancelInvoke("SpawnNPC"); // Stop invoking the SpawnNPC method
+                if (isGameOver && npcInGame == 0) // Check if the game is over and no NPCs are left
+                {
+                    uiManager.GameOverCanvas.enabled = true; // Show the game over canvas if no NPCs are in the game
+                    thievesCaughtText.text = "Thieves Caught: " + currentScore.ToString(); // Update the caught thieves text
+                    thievesNotCaughtText.text = "Thieves Not Caught: " + thievesNotCaught.ToString(); // Update the not caught thieves text
+                    Cursor.visible = true; // Show the cursor when game is over
+                    Cursor.lockState = CursorLockMode.None; // Unlock the cursor when game is over
+            }
             }
             else
             {
@@ -123,7 +134,6 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Q))
         {
             uiManager.BackToMenu(); // Go back to the main menu when Q is pressed
-            StopCoroutine(SpawnNPCCoroutine()); // Stop the NPC spawning coroutine
         }
     }
 
@@ -142,35 +152,16 @@ public class GameManager : MonoBehaviour
     /// This method spawns a new NPC at the specified spawn point.
     /// It assigns the locations for the NPC to navigate and increments the NPC count.
     /// It also spawns a child NPC that will follow the newly spawned NPC.
+    /// Increment the npcInGame and currentNpcCount variables to keep track of the number of NPCs in the game.
+    /// It is called repeatedly at a set interval to spawn multiple NPCs in the game.
     /// </summary>
     void SpawnNPC()
     {
         GameObject newNpc = Instantiate(npcPrefab, spawnPoint.position, spawnPoint.rotation); // Instantiate a new NPC at the spawn point
         newNpc.GetComponent<Npc>().locations = locations; // Assign the locations to the NPC
         GameObject childnewNpc = Instantiate(npcchildPrefab, spawnPoint.position, spawnPoint.rotation); // Instantiate a new child NPC at the spawn point
-        childnewNpc.GetComponent<Children>().target = newNpc.transform;
-
-    }
-
-    /// <summary>
-    /// This coroutine handles the spawning of NPCs in the game.
-    /// It checks the number of NPCs in the game and spawns new ones at regular intervals.
-    /// It stops spawning when the total number of NPCs has been reached or if the limit of 20 NPCs is reached.
-    /// </summary>
-    /// <returns></returns>
-    IEnumerator SpawnNPCCoroutine()
-    {
-        while (true)
-        {
-            if (currentNpcCount >= totalNpcToSpawn) // Stop spawning if the total number of NPCs has been reached
-            {
-                isGameOver = true; // Set the game over flag to true
-                yield break; // Exit the coroutine
-            }
-            SpawnNPC(); // Call the method to spawn a new NPC
-            npcInGame++; // Increment the number of NPCs in the game
-            currentNpcCount++; // Increment the current NPC count
-            yield return new WaitForSeconds(10f); // Wait for 10 seconds before spawning the next NPC
-        }
+        childnewNpc.GetComponent<Children>().target = newNpc.transform; // Set the target of the child NPC to the newly spawned NPC
+        npcInGame++; // Increment the number of NPCs in the game
+        currentNpcCount++; // Increment the current NPC count
     }
 }
