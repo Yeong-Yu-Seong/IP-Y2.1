@@ -5,6 +5,7 @@ Description: Controls the player character's interactions and movements
 */
 using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -38,12 +39,15 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     [SerializeField]
     bool onCooldown = false; // Flag to check if interaction is on cooldown
+    [SerializeField]
+    Image interactUI; // UI element to show when the player can interact with NPCs
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         gameManager = FindObjectOfType<GameManager>(); // Find the GameManager in the scene
         uiManager = FindObjectOfType<UIManager>(); // Find the UIManager in the scene
+        interactUI.gameObject.SetActive(false); // Hide the interact UI element initially
     }
 
     // Update is called once per frame
@@ -57,7 +61,7 @@ public class PlayerController : MonoBehaviour
             // Check if the hit object is an NPC
             if (hitInfo.collider.gameObject.CompareTag("Npc"))
             {
-                uiManager.ShowInteractUI(); // Show the interact UI element
+                interactUI.gameObject.SetActive(true); // Show the interact UI element
                 isNpc = true; // Set the flag to true if an NPC is detected
                 currentNpc = hitInfo.collider.gameObject.GetComponent<Npc>(); // Get the Npc component from the hit object
             }
@@ -66,7 +70,7 @@ public class PlayerController : MonoBehaviour
                 isNpc = false; // Reset the NPC interaction flag
                 currentNpc = null; // Clear the current NPC reference
             }
-            uiManager.HideInteractUI(); // Hide the interact UI element
+            interactUI.gameObject.SetActive(false); // Hide the interact UI element
         }
     }
     /// <summary>
@@ -104,8 +108,6 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(1f); // Wait for 1 second before allowing another interaction
         isNpc = false; // Reset the NPC interaction flag
         currentNpc = null; // Clear the current NPC reference
-        uiManager.HideInteractUI(); // Hide the interact UI element after interaction
         onCooldown = false; // Reset cooldown flag to allow future interactions
     }
-    
 }

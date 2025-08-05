@@ -8,6 +8,7 @@ TagManager:
   - Npc
   - Neutral
   - Location
+  - Exit
   layers:
   - Default
   - TransparentFX
