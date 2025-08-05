@@ -13,11 +13,11 @@ GameObject:
   - component: {fileID: 235552035940120885}
   - component: {fileID: 5655043398673033034}
   - component: {fileID: 4789891071731927270}
+  - component: {fileID: 6595286737476382421}
   - component: {fileID: -4514556116749984473}
   - component: {fileID: 2614567685492882591}
-  - component: {fileID: 5170269187863816413}
   m_Layer: 0
-  m_Name: AIChildTest
+  m_Name: AI
   m_TagString: Npc
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -32,9 +32,9 @@ Transform:
   m_GameObject: {fileID: 8184794216156411674}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 12, y: 0.5, z: -7}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
-  m_ConstrainProportionsScale: 1
+  m_LocalPosition: {x: 12, y: 1, z: -7}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -136,6 +136,25 @@ NavMeshAgent:
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &6595286737476382421
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8184794216156411674}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d561d3e96541ca24ca0627e2d1c9348e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  reachedShopPoint: 0
+  locations: []
+  currentLocation: {fileID: 0}
+  currentState: 
+  stolen: 0
+  scoreValue: 1
+  childPrefab: {fileID: 8184794216156411674, guid: 30744763b32cbb246b8c407ec54f934c, type: 3}
 --- !u!54 &-4514556116749984473
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -184,19 +203,3 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2, y: 2, z: 2}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &5170269187863816413
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8184794216156411674}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b05d108020695b841ae2a1e8b50885e1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  currentState: 0
-  target: {fileID: 6684105380165433294, guid: a484c0685bc15f447989189f076efae5, type: 3}
-  followDistance: 3
-  stopDistance: 2

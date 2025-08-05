@@ -38,16 +38,13 @@ public class PlayerController : MonoBehaviour
     /// Flag to check if interaction is on cooldown
     /// </summary>
     [SerializeField]
-    bool onCooldown = false; // Flag to check if interaction is on cooldown
-    [SerializeField]
-    Image interactUI; // UI element to show when the player can interact with NPCs
+    bool onCooldown = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         gameManager = FindObjectOfType<GameManager>(); // Find the GameManager in the scene
         uiManager = FindObjectOfType<UIManager>(); // Find the UIManager in the scene
-        interactUI.gameObject.SetActive(false); // Hide the interact UI element initially
     }
 
     // Update is called once per frame
@@ -61,7 +58,7 @@ public class PlayerController : MonoBehaviour
             // Check if the hit object is an NPC
             if (hitInfo.collider.gameObject.CompareTag("Npc"))
             {
-                interactUI.gameObject.SetActive(true); // Show the interact UI element
+                uiManager.ShowInteractUI(); // Show the interact UI element
                 isNpc = true; // Set the flag to true if an NPC is detected
                 currentNpc = hitInfo.collider.gameObject.GetComponent<Npc>(); // Get the Npc component from the hit object
             }
@@ -70,7 +67,7 @@ public class PlayerController : MonoBehaviour
                 isNpc = false; // Reset the NPC interaction flag
                 currentNpc = null; // Clear the current NPC reference
             }
-            interactUI.gameObject.SetActive(false); // Hide the interact UI element
+            uiManager.HideInteractUI(); // Hide the interact UI element if not interacting
         }
     }
     /// <summary>
@@ -92,7 +89,15 @@ public class PlayerController : MonoBehaviour
                 {
                     gameManager.UpdateScore(currentNpc.scoreValue); // Update score based on NPC's stolen item
                     gameManager.npcInGame--; // Decrement the NPC count in the game
+                    gameManager.thievesCaught++; // Increment the count of thieves caught
                     Destroy(currentNpc.gameObject); // Remove NPC after interaction
+                }
+                else
+                {
+                    if (gameManager.currentScore > 0)
+                    {
+                        gameManager.UpdateScore(-currentNpc.scoreValue); // Update score negatively if NPC did not steal
+                    }
                 }
             }
             StartCoroutine(OnInteractCoroutine()); // Start the interaction coroutine to handle delays

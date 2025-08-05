@@ -52,12 +52,28 @@ public class Npc : MonoBehaviour
     /// </summary>
     [SerializeField]
     AudioClip exitSound;
+    /// <summary>
+    /// Random speed for the NPC's movement
+    /// </summary>
+    float randomSpeed;
+    /// <summary>
+    /// Random chance set for the NPC to steal an item
+    /// </summary>
+    float randomChance;
+    /// <summary>
+    /// Stores the speed of the NPC for later use
+    /// </summary>
+    float speed;
 
     void Awake()
     {
         myAgent = GetComponent<NavMeshAgent>(); // Get the NavMeshAgent component attached to this NPC
         currentLocationIndex = 0; // Initialize the current location index
         gameManager = FindObjectOfType<GameManager>(); // Find the GameManager in the scene
+        randomChance = Random.Range(0.05f, 0.1f); // Set the random chance for the NPC to steal an item
+        randomSpeed = Random.Range(2f, 3f); // Set a random speed for the NPC's movement
+        myAgent.speed = randomSpeed; // Set the NPC's speed to a random value
+        speed = myAgent.speed; // Store the NPC's speed for later use
     }
 
     void Start()
@@ -161,11 +177,17 @@ public class Npc : MonoBehaviour
     IEnumerator Stolen()
     {
         // Generate a random number to determine if the item is stolen
-        float randomChance = Random.Range(0f, 1f);
-        if (randomChance < .05f) // 5% chance to steal
+        float randomChanceAtShelf = Random.Range(0f, 1f);
+        if (randomChanceAtShelf < randomChance) // If the random chance is less than the defined chance
         {
+            if (speed <= randomSpeed)
+            {
+                myAgent.speed += 1; // Set the NPC's speed to a higher value if the item is stolen
+                speed = myAgent.speed; // Update the stored speed value
+            }
             stolen = true; // Set the stolen flag to true
-            yield return new WaitForSeconds(10f); // Wait for 10 seconds before switching state
+            int randomIdleTime = Random.Range(10, 15); // Random idle time between 10 to 15 seconds
+            yield return new WaitForSeconds(randomIdleTime); // Wait for random idle time before switching state
             StartCoroutine(SwitchState("Walking")); // Switch back to walking state
         }
         else
@@ -195,6 +217,10 @@ public class Npc : MonoBehaviour
             if (stolen) // Check if the NPC has stolen an item
             {
                 Debug.Log("NPC has stolen an item and is exiting the shop.");
+                if (gameManager.currentScore > 0)
+                {
+                    gameManager.UpdateScore(-scoreValue); // Update the score when exiting with a stolen item
+                }
                 AudioSource.PlayClipAtPoint(exitSound, transform.position); // Play the exit sound if stolen
             }
         }

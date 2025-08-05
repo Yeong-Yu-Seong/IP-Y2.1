@@ -29,6 +29,11 @@ public class UIManager : MonoBehaviour
     /// Canvas for the game over screen
     /// </summary>
     public Canvas GameOverCanvas;
+    /// <summary>
+    /// Interact UI element
+    /// </summary>
+    [SerializeField]
+    Image interactUI; // UI element to show when the player can interact with NPCs
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -91,5 +96,14 @@ public class UIManager : MonoBehaviour
     public void Restart()
     {
         SceneManager.LoadScene(0); // Reload the current scene to restart the game
+    }
+    // Note: It is not working yet, need to fix the issue with the interact UI not showing correctly
+    public void ShowInteractUI()
+    {
+        interactUI.gameObject.SetActive(true); // Show the interact UI element
+    }
+    public void HideInteractUI()
+    {
+        interactUI.gameObject.SetActive(false); // Hide the interact UI element
     }
 }

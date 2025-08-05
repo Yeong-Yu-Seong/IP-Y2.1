@@ -7,6 +7,7 @@ Description: Manages the game state, score, and NPC spawning
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using UnityEngine.AI;
 
 public class GameManager : MonoBehaviour
 {
@@ -42,7 +43,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Current score of the player
     /// </summary>
-    int currentScore = 0;
+    public int currentScore = 0;
     /// <summary>
     /// Flag to check if NPCs are currently spawning
     /// </summary>
@@ -80,9 +81,28 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     TextMeshProUGUI thievesNotCaughtText;
     /// <summary>
+    /// TextMeshProUGUI component to display the final score when the game is over
+    /// </summary>
+    [SerializeField]
+    TextMeshProUGUI scoreTextFinal; // Text to display the final score when the game is over
+    /// <summary>
     /// Number of thieves not caught in the game
     /// </summary>
     public int thievesNotCaught = 0;
+    /// <summary>
+    /// Count of thieves caught in the game
+    /// </summary>
+    public int thievesCaught = 0;
+    /// <summary>
+    /// Main camera in the scene
+    /// </summary>
+    [SerializeField]
+    Camera mainCamera;
+    /// <summary>
+    /// Menu camera in the scene
+    /// </summary>
+    [SerializeField]
+    Camera menuCamera;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -97,6 +117,8 @@ public class GameManager : MonoBehaviour
         // Check if the game is in the main menu
         if (uiManager.Menu.enabled)
         {
+            menuCamera.enabled = true; // Enable the menu camera when in menu
+            mainCamera.enabled = false; // Disable the main camera when in menu
             Cursor.visible = true; // Show the cursor when in menu
             Cursor.lockState = CursorLockMode.None; // Unlock the cursor when in menu
             player.SetActive(false); // Disable the player GameObject when in menu
@@ -105,6 +127,8 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            menuCamera.enabled = false; // Disable the menu camera when not in menu
+            mainCamera.enabled = true; // Enable the main camera when not in menu
             if (!isSpawning) // Check if NPCs are not currently spawning
             {
                 isSpawning = true; // Set the flag to true to prevent multiple coroutines
@@ -117,8 +141,9 @@ public class GameManager : MonoBehaviour
                 if (isGameOver && npcInGame == 0) // Check if the game is over and no NPCs are left
                 {
                     uiManager.GameOverCanvas.enabled = true; // Show the game over canvas if no NPCs are in the game
-                    thievesCaughtText.text = "Thieves Caught: " + currentScore.ToString(); // Update the caught thieves text
+                    thievesCaughtText.text = "Thieves Caught: " + thievesCaught.ToString(); // Update the caught thieves text
                     thievesNotCaughtText.text = "Thieves Not Caught: " + thievesNotCaught.ToString(); // Update the not caught thieves text
+                    scoreTextFinal.text = "Final Score: " + currentScore.ToString(); // Update the final score text
                     Cursor.visible = true; // Show the cursor when game is over
                     Cursor.lockState = CursorLockMode.None; // Unlock the cursor when game is over
             }
@@ -159,8 +184,14 @@ public class GameManager : MonoBehaviour
     {
         GameObject newNpc = Instantiate(npcPrefab, spawnPoint.position, spawnPoint.rotation); // Instantiate a new NPC at the spawn point
         newNpc.GetComponent<Npc>().locations = locations; // Assign the locations to the NPC
-        GameObject childnewNpc = Instantiate(npcchildPrefab, spawnPoint.position, spawnPoint.rotation); // Instantiate a new child NPC at the spawn point
-        childnewNpc.GetComponent<Children>().target = newNpc.transform; // Set the target of the child NPC to the newly spawned NPC
+        int randomChildCount = Random.Range(0, 2); // Randomly decide how many child NPCs to spawn (0 or 1)
+        for (int i = 0; i < randomChildCount; i++)
+        {
+            GameObject childnewNpc = Instantiate(npcchildPrefab, spawnPoint.position, spawnPoint.rotation); // Instantiate a new child NPC at the spawn point
+            childnewNpc.GetComponent<Children>().target = newNpc.transform; // Set the target of the child NPC to the newly spawned NPC
+            NavMeshAgent childNpcAgent = childnewNpc.GetComponent<NavMeshAgent>(); // Get the NavMeshAgent component of the child NPC
+            childNpcAgent.speed = newNpc.GetComponent<NavMeshAgent>().speed; // Set the child's speed to match the parent's speed
+        }
         npcInGame++; // Increment the number of NPCs in the game
         currentNpcCount++; // Increment the current NPC count
     }
