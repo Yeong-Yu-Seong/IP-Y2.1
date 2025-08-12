@@ -16,9 +16,9 @@ FBXHeaderExtension:  {
 		Month: 8
 		Day: 12
 		Hour: 21
-		Minute: 45
-		Second: 34
-		Millisecond: 908
+		Minute: 52
+		Second: 0
+		Millisecond: 761
 	}
 	Creator: "FBX SDK/FBX Plugins version 2020.3.6"
 }
@@ -3384,13 +3384,13 @@ Objects:  {
 			Property: "Original|ApplicationVendor", "KString", "", "Autodesk"
 			Property: "Original|ApplicationName", "KString", "", "Maya"
 			Property: "Original|ApplicationVersion", "KString", "", "2025"
-			Property: "Original|DateTime_GMT", "DateTime", "", "12/08/2025 13:45:34.905"
+			Property: "Original|DateTime_GMT", "DateTime", "", "12/08/2025 13:52:00.755"
 			Property: "Original|FileName", "KString", "", "C:\Users\stand\OneDrive\Desktop\Sem 2\IP\outside stuff.fbx"
 			Property: "LastSaved", "Compound", ""
 			Property: "LastSaved|ApplicationVendor", "KString", "", "Autodesk"
 			Property: "LastSaved|ApplicationName", "KString", "", "Maya"
 			Property: "LastSaved|ApplicationVersion", "KString", "", "2025"
-			Property: "LastSaved|DateTime_GMT", "DateTime", "", "12/08/2025 13:45:34.905"
+			Property: "LastSaved|DateTime_GMT", "DateTime", "", "12/08/2025 13:52:00.755"
 			Property: "Original|ApplicationActiveProject", "KString", "", "C:\Users\stand\OneDrive\Desktop\Sem 2\IP"
 			Property: "Original|ApplicationNativeFile", "KString", "", "C:\Users\stand\OneDrive\Desktop\Sem 2\IP\pavement.ma"
 		}
