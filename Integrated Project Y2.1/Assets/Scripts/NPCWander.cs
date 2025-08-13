@@ -1,7 +1,7 @@
 /*
-Author: Elly
+Author: Ellysha Adriana Puteri Mohamad Yusof
 Date created: 12 August 2025
-Description: handles the movement of NPCs outside the store
+Description: Handles the movement of NPCs outside the store
 */
 
 using UnityEngine;

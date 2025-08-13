@@ -103,6 +103,16 @@ public class GameManager : MonoBehaviour
     /// </summary>
     [SerializeField]
     Camera menuCamera;
+    /// <summary>
+    /// Prefab for the roaming NPC
+    /// </summary>
+    [SerializeField]
+    GameObject roamingNPC;
+    /// <summary>
+    /// Transform for the roaming NPC spawn point
+    /// </summary>
+    [SerializeField]
+    Transform roamingNPCSpawn;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -124,6 +134,7 @@ public class GameManager : MonoBehaviour
             player.SetActive(false); // Disable the player GameObject when in menu
             isSpawning = false; // Reset the spawning flag when in menu
             CancelInvoke("SpawnNPC"); // Stop invoking the SpawnNPC method if in menu
+            CancelInvoke("SpawnRoamingNPC"); // Stop invoking the SpawnRoamingNPC method if in menu
         }
         else
         {
@@ -133,11 +144,13 @@ public class GameManager : MonoBehaviour
             {
                 isSpawning = true; // Set the flag to true to prevent multiple coroutines
                 InvokeRepeating("SpawnNPC", 10f, 10f); // Start spawning NPCs at regular intervals
+                InvokeRepeating("SpawnRoamingNPC", 5f, 5f); // Start spawning roaming NPCs at regular intervals
             }
             if (currentNpcCount >= totalNpcToSpawn) // Stop spawning if the total number of NPCs has been reached
             {
                 isGameOver = true; // Set the game over flag to true
                 CancelInvoke("SpawnNPC"); // Stop invoking the SpawnNPC method
+                CancelInvoke("SpawnRoamingNPC"); // Stop invoking the SpawnRoamingNPC method
                 if (isGameOver && npcInGame == 0) // Check if the game is over and no NPCs are left
                 {
                     uiManager.GameOverCanvas.enabled = true; // Show the game over canvas if no NPCs are in the game
@@ -146,7 +159,7 @@ public class GameManager : MonoBehaviour
                     scoreTextFinal.text = "Final Score: " + currentScore.ToString(); // Update the final score text
                     Cursor.visible = true; // Show the cursor when game is over
                     Cursor.lockState = CursorLockMode.None; // Unlock the cursor when game is over
-            }
+                }
             }
             else
             {
@@ -194,5 +207,9 @@ public class GameManager : MonoBehaviour
         }
         npcInGame++; // Increment the number of NPCs in the game
         currentNpcCount++; // Increment the current NPC count
+    }
+    void SpawnRoamingNPC()
+    {
+        GameObject roamingNpc = Instantiate(roamingNPC, roamingNPCSpawn.position, roamingNPCSpawn.rotation); // Instantiate a roaming NPC at the spawn point
     }
 }

@@ -13,11 +13,11 @@ GameObject:
   - component: {fileID: 235552035940120885}
   - component: {fileID: 5655043398673033034}
   - component: {fileID: 4789891071731927270}
-  - component: {fileID: 6595286737476382421}
   - component: {fileID: -4514556116749984473}
   - component: {fileID: 2614567685492882591}
+  - component: {fileID: 3612223641651749401}
   m_Layer: 0
-  m_Name: AI
+  m_Name: RoamingAI
   m_TagString: Npc
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -136,26 +136,6 @@ NavMeshAgent:
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &6595286737476382421
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8184794216156411674}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d561d3e96541ca24ca0627e2d1c9348e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  reachedShopPoint: 0
-  locations: []
-  currentLocation: {fileID: 0}
-  currentState: 
-  stolen: 0
-  scoreValue: 1
-  exitSound: {fileID: 8300000, guid: 56e0020567b66f449abdff892738ee39, type: 3}
-  stealSound: {fileID: 8300000, guid: d0cde4b92bca5ba4282eb276c2f51c26, type: 3}
 --- !u!54 &-4514556116749984473
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -204,3 +184,21 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2, y: 2, z: 2}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &3612223641651749401
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8184794216156411674}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5371ea1b7365c5640bc6bc3b899e99b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 0}
+  moveSpeed: 2
+  minIdleTime: 1
+  maxIdleTime: 3
+  minWalkTime: 2
+  maxWalkTime: 4

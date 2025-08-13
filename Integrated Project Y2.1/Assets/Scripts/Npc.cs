@@ -64,6 +64,11 @@ public class Npc : MonoBehaviour
     /// Stores the speed of the NPC for later use
     /// </summary>
     float speed;
+    /// <summary>
+    /// Audio clip to play when the NPC steals an item
+    /// </summary>
+    [SerializeField]
+    AudioClip stealSound;
 
     void Awake()
     {
@@ -186,6 +191,7 @@ public class Npc : MonoBehaviour
                 speed = myAgent.speed; // Update the stored speed value
             }
             stolen = true; // Set the stolen flag to true
+            AudioSource.PlayClipAtPoint(stealSound, transform.position); // Play the steal sound effect
             int randomIdleTime = Random.Range(10, 15); // Random idle time between 10 to 15 seconds
             yield return new WaitForSeconds(randomIdleTime); // Wait for random idle time before switching state
             StartCoroutine(SwitchState("Walking")); // Switch back to walking state

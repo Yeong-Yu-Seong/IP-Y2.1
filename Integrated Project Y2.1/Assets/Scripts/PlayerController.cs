@@ -39,6 +39,11 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     [SerializeField]
     bool onCooldown = false;
+    /// <summary>
+    /// Audio clip to play when successfully caught the thief
+    /// </summary>
+    [SerializeField]
+    AudioClip successSound;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -90,6 +95,7 @@ public class PlayerController : MonoBehaviour
                     gameManager.UpdateScore(currentNpc.scoreValue); // Update score based on NPC's stolen item
                     gameManager.npcInGame--; // Decrement the NPC count in the game
                     gameManager.thievesCaught++; // Increment the count of thieves caught
+                    AudioSource.PlayClipAtPoint(successSound, transform.position); // Play success sound
                     Destroy(currentNpc.gameObject); // Remove NPC after interaction
                 }
                 else
