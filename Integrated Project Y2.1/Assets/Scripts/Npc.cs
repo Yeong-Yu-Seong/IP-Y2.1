@@ -76,7 +76,7 @@ public class Npc : MonoBehaviour
         myAgent = GetComponent<NavMeshAgent>(); // Get the NavMeshAgent component attached to this NPC
         currentLocationIndex = 0; // Initialize the current location index
         gameManager = FindObjectOfType<GameManager>(); // Find the GameManager in the scene
-        randomChance = 1;//Random.Range(0.05f, 0.1f); // Set the random chance for the NPC to steal an item
+        randomChance = Random.Range(0.05f, 0.1f); // Set the random chance for the NPC to steal an item
         randomSpeed = Random.Range(2f, 3f); // Set a random speed for the NPC's movement
         myAgent.speed = randomSpeed; // Set the NPC's speed to a random value
         speed = myAgent.speed; // Store the NPC's speed for later use
@@ -189,7 +189,7 @@ public class Npc : MonoBehaviour
         {
             if (speed <= randomSpeed)
             {
-                myAgent.speed += 1; // Set the NPC's speed to a higher value if the item is stolen
+                myAgent.speed *= 1.5f; // Set the NPC's speed to a higher value if the item is stolen
                 speed = myAgent.speed; // Update the stored speed value
             }
             thiefAlert.StartStealing();
