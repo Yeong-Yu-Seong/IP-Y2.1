@@ -69,13 +69,14 @@ public class Npc : MonoBehaviour
     /// </summary>
     [SerializeField]
     AudioClip stealSound;
+    ThiefAlert thiefAlert; // Reference to the ThiefAlert script for handling stealing behavior
 
     void Awake()
     {
         myAgent = GetComponent<NavMeshAgent>(); // Get the NavMeshAgent component attached to this NPC
         currentLocationIndex = 0; // Initialize the current location index
         gameManager = FindObjectOfType<GameManager>(); // Find the GameManager in the scene
-        randomChance = Random.Range(0.05f, 0.1f); // Set the random chance for the NPC to steal an item
+        randomChance = 1;//Random.Range(0.05f, 0.1f); // Set the random chance for the NPC to steal an item
         randomSpeed = Random.Range(2f, 3f); // Set a random speed for the NPC's movement
         myAgent.speed = randomSpeed; // Set the NPC's speed to a random value
         speed = myAgent.speed; // Store the NPC's speed for later use
@@ -84,6 +85,7 @@ public class Npc : MonoBehaviour
     void Start()
     {
         StartCoroutine(SwitchState("Idle")); // Start the NPC in the Idle state
+        thiefAlert = GetComponent<ThiefAlert>(); // Get the ThiefAlert component attached to this NPC
     }
 
     /// <summary>
@@ -134,7 +136,7 @@ public class Npc : MonoBehaviour
                 else
                 {
                     currentLocationIndex += 1; // Set the next location index
-                    if (currentLocationIndex == 9 && stolen)
+                    if (currentLocationIndex == (locations.Length - 1) && stolen)
                     {
                         currentLocationIndex += 1; // Skip the next location if the item is stolen
                     }
@@ -190,6 +192,7 @@ public class Npc : MonoBehaviour
                 myAgent.speed += 1; // Set the NPC's speed to a higher value if the item is stolen
                 speed = myAgent.speed; // Update the stored speed value
             }
+            thiefAlert.StartStealing();
             stolen = true; // Set the stolen flag to true
             AudioSource.PlayClipAtPoint(stealSound, transform.position); // Play the steal sound effect
             int randomIdleTime = Random.Range(10, 15); // Random idle time between 10 to 15 seconds
@@ -219,10 +222,9 @@ public class Npc : MonoBehaviour
         }
         else if (other.gameObject.CompareTag("Exit")) // Check if the collided object is an exit point
         {
-            // Note: Need to find an audio source and haven't tested this yet
             if (stolen) // Check if the NPC has stolen an item
             {
-                Debug.Log("NPC has stolen an item and is exiting the shop.");
+                thiefAlert.LeaveStore(); // Call the exit method in ThiefAlert to handle exiting the store
                 if (gameManager.currentScore > 0)
                 {
                     gameManager.UpdateScore(-scoreValue); // Update the score when exiting with a stolen item
