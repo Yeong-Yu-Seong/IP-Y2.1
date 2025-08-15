@@ -61,7 +61,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Total number of NPCs to spawn in the game
     /// </summary>
-    int totalNpcToSpawn = 5;
+    int totalNpcToSpawn = 20;
     /// <summary>
     /// Flag to check if the game is over
     /// </summary>
@@ -84,7 +84,7 @@ public class GameManager : MonoBehaviour
     /// TextMeshProUGUI component to display the final score when the game is over
     /// </summary>
     [SerializeField]
-    TextMeshProUGUI scoreTextFinal; // Text to display the final score when the game is over
+    TextMeshProUGUI scoreTextFinal;
     /// <summary>
     /// Number of thieves not caught in the game
     /// </summary>
@@ -118,6 +118,10 @@ public class GameManager : MonoBehaviour
     /// </summary>
     [SerializeField]
     ParticleSystem redDustEffect;
+    /// <summary>
+    /// Flag to check if a thief is escaping
+    /// </summary>
+    bool isEscaping = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -166,6 +170,11 @@ public class GameManager : MonoBehaviour
                     Cursor.lockState = CursorLockMode.None; // Unlock the cursor when game is over
                 }
             }
+            else if (currentNpcCount >= 5)
+            {
+                // I'll add stuff at a later time
+                // To make sure the npc in store dont exceed a certain limit
+            }
             else
             {
                 Cursor.visible = false; // Hide the cursor when not in menu
@@ -177,6 +186,11 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Q))
         {
             uiManager.BackToMenu(); // Go back to the main menu when Q is pressed
+        }
+        if (!isEscaping)
+        {
+            uiManager.popupText.enabled = false; // Hide the popup text UI element
+            StopCoroutine(ShowThiefEscapedCoroutine()); // Stop the thief escaped coroutine if it's running
         }
     }
 
@@ -219,9 +233,11 @@ public class GameManager : MonoBehaviour
     }
     public IEnumerator ShowThiefEscapedCoroutine()
     {
+        isEscaping = true;
         uiManager.popupText.enabled = true; // Enable the popup text UI element
         redDustEffect.Play(); // Play the red dust particle effect
         yield return new WaitForSeconds(3f); // Wait for 3 seconds
         uiManager.popupText.enabled = false; // Disable the popup text UI element after the wait
+        isEscaping = false;
     }   
 }

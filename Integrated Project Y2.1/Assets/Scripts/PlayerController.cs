@@ -44,7 +44,6 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     [SerializeField]
     AudioClip successSound;
-    ThiefAlert thiefAlert;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -65,7 +64,6 @@ public class PlayerController : MonoBehaviour
             if (hitInfo.collider.gameObject.CompareTag("Npc"))
             {
                 Debug.Log("NPC detected");
-                uiManager.ShowInteractUI(); // Show the interact UI element
                 isNpc = true; // Set the flag to true if an NPC is detected
                 currentNpc = hitInfo.collider.gameObject.GetComponent<Npc>(); // Get the Npc component from the hit object
             }
@@ -74,7 +72,6 @@ public class PlayerController : MonoBehaviour
                 isNpc = false; // Reset the NPC interaction flag
                 currentNpc = null; // Clear the current NPC reference
             }
-            uiManager.HideInteractUI(); // Hide the interact UI element if not interacting
         }
     }
     /// <summary>
