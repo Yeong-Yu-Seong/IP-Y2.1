@@ -69,7 +69,10 @@ public class Npc : MonoBehaviour
     /// </summary>
     [SerializeField]
     AudioClip stealSound;
-    ThiefAlert thiefAlert; // Reference to the ThiefAlert script for handling stealing behavior
+    /// <summary>
+    /// Reference to the ThiefAlert script for handling stealing behavior
+    /// </summary>
+    ThiefAlert thiefAlert;
 
     void Awake()
     {
@@ -89,12 +92,12 @@ public class Npc : MonoBehaviour
     }
 
     /// <summary>
-    /// This method switches the NPC's state to a new state.
-    /// It stops the current state coroutine if it exists and starts the new state coroutine.
-    /// </summary>
-    /// <param name="newState"></param>
-    /// <returns></returns>
-    IEnumerator SwitchState(string newState)
+        /// This method switches the NPC's state to a new state.
+        /// It stops the current state coroutine if it exists and starts the new state coroutine.
+        /// </summary>
+        /// <param name="newState"></param>
+        /// <returns></returns>
+        IEnumerator SwitchState(string newState)
     {
         // Check if the new state is the same as the current state
         if (currentState == newState)
@@ -136,7 +139,7 @@ public class Npc : MonoBehaviour
                 else
                 {
                     currentLocationIndex += 1; // Set the next location index
-                    if (currentLocationIndex == (locations.Length - 1) && stolen)
+                    if (currentLocationIndex == (locations.Length - 2) && stolen)
                     {
                         currentLocationIndex += 1; // Skip the next location if the item is stolen
                     }
@@ -225,6 +228,7 @@ public class Npc : MonoBehaviour
             if (stolen) // Check if the NPC has stolen an item
             {
                 thiefAlert.LeaveStore(); // Call the exit method in ThiefAlert to handle exiting the store
+                StartCoroutine(gameManager.ShowThiefEscapedCoroutine()); // Show escape effects when leaving the store
                 if (gameManager.currentScore > 0)
                 {
                     gameManager.UpdateScore(-scoreValue); // Update the score when exiting with a stolen item

@@ -5,6 +5,8 @@ Description: Manages the UI elements and transitions between menus
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using TMPro;
+
 public class UIManager : MonoBehaviour
 {
     /// <summary>
@@ -33,7 +35,11 @@ public class UIManager : MonoBehaviour
     /// Interact UI element
     /// </summary>
     [SerializeField]
-    Image interactUI; // UI element to show when the player can interact with NPCs
+    Image interactUI;
+    /// <summary>
+    /// Pop up text for when a thief escapes
+    /// </summary>
+    public TextMeshProUGUI popupText;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -41,6 +47,12 @@ public class UIManager : MonoBehaviour
         Menu.enabled = true; // Enable the main menu canvas
         GameCanvas.enabled = false; // Disable the game canvas initially
         GameOverCanvas.enabled = false; // Disable the game over canvas initially
+        popupText.enabled = false; // Disable the popup text initially
+        interactUI.enabled = false; // Disable the interact UI initially
+        foreach (Transform child in interactUI.transform)
+        {
+            child.gameObject.SetActive(false); // Disable all child elements of the interact UI
+        }
     }
 
     // Update is called once per frame
@@ -100,10 +112,18 @@ public class UIManager : MonoBehaviour
     // Note: It is not working yet, need to fix the issue with the interact UI not showing correctly
     public void ShowInteractUI()
     {
-        interactUI.gameObject.SetActive(true); // Show the interact UI element
+        interactUI.enabled = true; // Show the interact UI element
+        foreach (Transform child in interactUI.transform)
+        {
+            child.gameObject.SetActive(true); // Show all child elements of the interact UI
+        }
     }
     public void HideInteractUI()
     {
-        interactUI.gameObject.SetActive(false); // Hide the interact UI element
+        interactUI.enabled = false; // Hide the interact UI element
+        foreach (Transform child in interactUI.transform)
+        {
+            child.gameObject.SetActive(false); // Hide all child elements of the interact UI
+        }
     }
 }

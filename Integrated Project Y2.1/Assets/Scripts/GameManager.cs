@@ -113,6 +113,11 @@ public class GameManager : MonoBehaviour
     /// </summary>
     [SerializeField]
     Transform roamingNPCSpawn;
+    /// <summary>
+    /// Particle system for the red dust effect when a thief escapes
+    /// </summary>
+    [SerializeField]
+    ParticleSystem redDustEffect;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -212,4 +217,11 @@ public class GameManager : MonoBehaviour
     {
         GameObject roamingNpc = Instantiate(roamingNPC, roamingNPCSpawn.position, roamingNPCSpawn.rotation); // Instantiate a roaming NPC at the spawn point
     }
+    public IEnumerator ShowThiefEscapedCoroutine()
+    {
+        uiManager.popupText.enabled = true; // Enable the popup text UI element
+        redDustEffect.Play(); // Play the red dust particle effect
+        yield return new WaitForSeconds(3f); // Wait for 3 seconds
+        uiManager.popupText.enabled = false; // Disable the popup text UI element after the wait
+    }   
 }

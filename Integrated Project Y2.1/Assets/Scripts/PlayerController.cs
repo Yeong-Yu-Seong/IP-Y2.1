@@ -44,6 +44,7 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     [SerializeField]
     AudioClip successSound;
+    ThiefAlert thiefAlert;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -63,6 +64,7 @@ public class PlayerController : MonoBehaviour
             // Check if the hit object is an NPC
             if (hitInfo.collider.gameObject.CompareTag("Npc"))
             {
+                Debug.Log("NPC detected");
                 uiManager.ShowInteractUI(); // Show the interact UI element
                 isNpc = true; // Set the flag to true if an NPC is detected
                 currentNpc = hitInfo.collider.gameObject.GetComponent<Npc>(); // Get the Npc component from the hit object
@@ -89,9 +91,11 @@ public class PlayerController : MonoBehaviour
         {
             if (isNpc) // Check if the player is interacting with an NPC
             {
+                uiManager.ShowInteractUI(); // Show the interact UI element
                 // Interact with NPC that stolen an item
                 if (currentNpc.stolen)
                 {
+                    currentNpc.GetComponent<ThiefAlert>().CaughtByPlayer();
                     gameManager.UpdateScore(currentNpc.scoreValue); // Update score based on NPC's stolen item
                     gameManager.npcInGame--; // Decrement the NPC count in the game
                     gameManager.thievesCaught++; // Increment the count of thieves caught
@@ -107,6 +111,7 @@ public class PlayerController : MonoBehaviour
                 }
             }
             StartCoroutine(OnInteractCoroutine()); // Start the interaction coroutine to handle delays
+            uiManager.HideInteractUI(); // Hide the interact UI element
         }
     }
     /// <summary>

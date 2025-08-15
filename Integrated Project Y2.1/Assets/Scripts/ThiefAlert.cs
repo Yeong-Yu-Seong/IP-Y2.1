@@ -16,12 +16,13 @@ public class ThiefAlert : MonoBehaviour
     private GameObject activeMark;
 
     [Header("Star Effect")]
-    public ParticleSystem starEffect; // Assign particle system prefab in Inspector
+    public GameObject starEffectPrefab; // Assign particle system prefab in Inspector
 
     [Header("Thief State")]
     public bool isStealing = false;
     public bool isCaught = false;
     public bool isOutOfStore = false;
+
 
     void Update()
     {
@@ -66,10 +67,10 @@ public class ThiefAlert : MonoBehaviour
         isStealing = false;
 
         // Play star effect at NPC's position
-        if (starEffect != null)
+        if (starEffectPrefab != null)
         {
-            starEffect.transform.position = transform.position + Vector3.up * 1.5f; // Slightly above NPC
-            starEffect.Play();
+            GameObject starEffect = Instantiate(starEffectPrefab, transform.position + Vector3.up * 1.5f, transform.rotation);
+            starEffect.GetComponent<ParticleSystem>().Play();
         }
     }
 }
