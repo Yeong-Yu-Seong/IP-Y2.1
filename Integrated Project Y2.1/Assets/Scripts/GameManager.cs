@@ -61,7 +61,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Total number of NPCs to spawn in the game
     /// </summary>
-    int totalNpcToSpawn = 20;
+    int totalNpcToSpawn = 5;
     /// <summary>
     /// Flag to check if the game is over
     /// </summary>
