@@ -63,7 +63,7 @@ public class PlayerController : MonoBehaviour
             // Check if the hit object is an NPC
             if (hitInfo.collider.gameObject.CompareTag("Npc"))
             {
-                uiManager.ShowInteractUI(); // Show the interact UI element
+                Debug.Log("NPC detected");
                 isNpc = true; // Set the flag to true if an NPC is detected
                 currentNpc = hitInfo.collider.gameObject.GetComponent<Npc>(); // Get the Npc component from the hit object
             }
@@ -72,7 +72,6 @@ public class PlayerController : MonoBehaviour
                 isNpc = false; // Reset the NPC interaction flag
                 currentNpc = null; // Clear the current NPC reference
             }
-            uiManager.HideInteractUI(); // Hide the interact UI element if not interacting
         }
     }
     /// <summary>
@@ -89,9 +88,11 @@ public class PlayerController : MonoBehaviour
         {
             if (isNpc) // Check if the player is interacting with an NPC
             {
+                uiManager.ShowInteractUI(); // Show the interact UI element
                 // Interact with NPC that stolen an item
                 if (currentNpc.stolen)
                 {
+                    currentNpc.GetComponent<ThiefAlert>().CaughtByPlayer();
                     gameManager.UpdateScore(currentNpc.scoreValue); // Update score based on NPC's stolen item
                     gameManager.npcInGame--; // Decrement the NPC count in the game
                     gameManager.thievesCaught++; // Increment the count of thieves caught
@@ -107,6 +108,7 @@ public class PlayerController : MonoBehaviour
                 }
             }
             StartCoroutine(OnInteractCoroutine()); // Start the interaction coroutine to handle delays
+            uiManager.HideInteractUI(); // Hide the interact UI element
         }
     }
     /// <summary>
