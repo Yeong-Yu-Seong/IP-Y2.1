@@ -170,11 +170,6 @@ public class GameManager : MonoBehaviour
                     Cursor.lockState = CursorLockMode.None; // Unlock the cursor when game is over
                 }
             }
-            else if (currentNpcCount >= 5)
-            {
-                // I'll add stuff at a later time
-                // To make sure the npc in store dont exceed a certain limit
-            }
             else
             {
                 Cursor.visible = false; // Hide the cursor when not in menu
