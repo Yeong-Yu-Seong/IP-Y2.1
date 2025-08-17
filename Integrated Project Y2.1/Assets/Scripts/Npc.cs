@@ -6,6 +6,7 @@ Description: Controls the NPC behavior and state transitions
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using System.Collections.Generic;
 
 public class Npc : MonoBehaviour
 {
@@ -73,6 +74,30 @@ public class Npc : MonoBehaviour
     /// Reference to the ThiefAlert script for handling stealing behavior
     /// </summary>
     ThiefAlert thiefAlert;
+    /// <summary>
+    /// List of toys that the NPC can steal in area 1
+    /// </summary>
+    [SerializeField]
+    List<GameObject> toysToStealArea1;
+
+    /// <summary>
+    /// List of toys that the NPC can steal in area 2
+    /// </summary>
+    [SerializeField]
+    List<GameObject> toysToStealArea2;
+
+    /// <summary>
+    /// List of toys that the NPC can steal in area 3
+    /// </summary>
+    [SerializeField]
+    List<GameObject> toysToStealArea3;
+
+    /// <summary>
+    /// List of toys that the NPC can steal in area 4
+    /// </summary>
+    [SerializeField]
+    List<GameObject> toysToStealArea4;
+    int currentArea = 0;
 
     void Awake()
     {
@@ -89,15 +114,28 @@ public class Npc : MonoBehaviour
     {
         StartCoroutine(SwitchState("Idle")); // Start the NPC in the Idle state
         thiefAlert = GetComponent<ThiefAlert>(); // Get the ThiefAlert component attached to this NPC
+        // Initialize the toys to steal based on the area
+        toysToStealArea1 = gameManager.toysArea1;
+        toysToStealArea2 = gameManager.toysArea2;
+        toysToStealArea3 = gameManager.toysArea3;
+        toysToStealArea4 = gameManager.toysArea4;
+    }
+    public void UpdateToysList()
+    {
+        // Update the toys list in the GameManager
+        gameManager.toysArea1 = toysToStealArea1;
+        gameManager.toysArea2 = toysToStealArea2;
+        gameManager.toysArea3 = toysToStealArea3;
+        gameManager.toysArea4 = toysToStealArea4;
     }
 
     /// <summary>
-        /// This method switches the NPC's state to a new state.
-        /// It stops the current state coroutine if it exists and starts the new state coroutine.
-        /// </summary>
-        /// <param name="newState"></param>
-        /// <returns></returns>
-        IEnumerator SwitchState(string newState)
+    /// This method switches the NPC's state to a new state.
+    /// It stops the current state coroutine if it exists and starts the new state coroutine.
+    /// </summary>
+    /// <param name="newState"></param>
+    /// <returns></returns>
+    IEnumerator SwitchState(string newState)
     {
         // Check if the new state is the same as the current state
         if (currentState == newState)
@@ -147,10 +185,12 @@ public class Npc : MonoBehaviour
                 // Check if the current location is a shopable place or a neutral point
                 if (!currentLocation.CompareTag("Neutral"))
                 {
+                    currentArea += 1;
                     StartCoroutine(SwitchState("Stolen")); // Switch to stolen state if reached a shopable place
                 }
                 else
                 {
+                    currentArea += 1;
                     StartCoroutine(SwitchState("Idle")); // Switch to idle state if reached a neutral point
                 }
                 yield break; // Exit the Walking coroutine
@@ -195,7 +235,30 @@ public class Npc : MonoBehaviour
                 myAgent.speed *= 1.5f; // Set the NPC's speed to a higher value if the item is stolen
                 speed = myAgent.speed; // Update the stored speed value
             }
-            thiefAlert.StartStealing();
+
+            thiefAlert.StartStealing(); // Start the stealing animation
+            // Select a toy based on the current area
+            List<GameObject> toysToSteal = null;
+            switch (currentArea)
+            {
+                case 1:
+                    toysToSteal = toysToStealArea1;
+                    break;
+                case 2:
+                    toysToSteal = toysToStealArea2;
+                    break;
+                case 3:
+                    toysToSteal = toysToStealArea3;
+                    break;
+                case 4:
+                    toysToSteal = toysToStealArea4;
+                    break;
+            }
+            int randomIndex = Random.Range(0, toysToSteal.Count); // Select a random toy from the list
+            GameObject selectedToy = toysToSteal[randomIndex]; // Select a random toy from the list
+            selectedToy.SetActive(false); // Deactivate the selected toy
+            toysToSteal.Remove(selectedToy); // Remove the stolen toy from the list
+            UpdateToysList(); // Update the toys list in the GameManager
             stolen = true; // Set the stolen flag to true
             AudioSource.PlayClipAtPoint(stealSound, transform.position); // Play the steal sound effect
             int randomIdleTime = Random.Range(10, 15); // Random idle time between 10 to 15 seconds
@@ -228,7 +291,7 @@ public class Npc : MonoBehaviour
             if (stolen) // Check if the NPC has stolen an item
             {
                 thiefAlert.LeaveStore(); // Call the exit method in ThiefAlert to handle exiting the store
-                StartCoroutine(gameManager.ShowThiefEscapedCoroutine()); // Show escape effects when leaving the store
+                gameManager.redDustEffect.Play(); // Play the red dust effect
                 if (gameManager.currentScore > 0)
                 {
                     gameManager.UpdateScore(-scoreValue); // Update the score when exiting with a stolen item

@@ -42,5 +42,12 @@ public class NPCWalkerOneWay : MonoBehaviour
         // Arrived — destroy NPC
         Destroy(gameObject);
     }
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Destination"))
+        {
+            Destroy(gameObject);
+        }
+    }
 }
 

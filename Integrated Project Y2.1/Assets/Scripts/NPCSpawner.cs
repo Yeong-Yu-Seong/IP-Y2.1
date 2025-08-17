@@ -8,7 +8,6 @@ using UnityEngine;
 public class NPCSpawner : MonoBehaviour
 {
     [Header("Spawner Settings")]
-    public GameObject npcPrefab;
     public Transform spawnPoint;         //Where NPCs spawn
     public Transform destinationPoint;   //Where NPCs walk to
 
@@ -18,6 +17,8 @@ public class NPCSpawner : MonoBehaviour
 
     private float timer;
     private float spawnInterval = 7f;    //spawn time (7 seconds)
+    [SerializeField]
+    GameObject[] roamingNPCs;
 
     private void Update()
     {
@@ -32,8 +33,9 @@ public class NPCSpawner : MonoBehaviour
 
     void SpawnNPC()
     {
-        GameObject npc = Instantiate(npcPrefab, spawnPoint.position, spawnPoint.rotation);
-        
+        int randomIndex = Random.Range(0, roamingNPCs.Length);
+        GameObject npc = Instantiate(roamingNPCs[randomIndex], spawnPoint.position, spawnPoint.rotation);
+
         // Set the NPC's destination and random speed
         NPCWalkerOneWay walker = npc.GetComponent<NPCWalkerOneWay>();
         if (walker != null)

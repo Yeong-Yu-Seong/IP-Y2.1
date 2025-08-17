@@ -8,6 +8,7 @@ using UnityEngine;
 using TMPro;
 using System.Collections;
 using UnityEngine.AI;
+using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
@@ -116,12 +117,33 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Particle system for the red dust effect when a thief escapes
     /// </summary>
-    [SerializeField]
-    ParticleSystem redDustEffect;
+    public ParticleSystem redDustEffect;
     /// <summary>
-    /// Flag to check if a thief is escaping
+    /// Array of adult NPC prefabs
     /// </summary>
-    bool isEscaping = false;
+    [SerializeField]
+    GameObject[] adultNPCs;
+    /// <summary>
+    /// Array of child NPC prefabs
+    /// </summary>
+    [SerializeField]
+    GameObject[] childNPCs;
+    /// <summary>
+    /// List of toys that can be stolen in area 1
+    /// </summary>
+    public List<GameObject> toysArea1;
+    /// <summary>
+    /// List of toys that can be stolen in area 2
+    /// </summary>
+    public List<GameObject> toysArea2;
+    /// <summary>
+    /// List of toys that can be stolen in area 3
+    /// </summary>
+    public List<GameObject> toysArea3;
+    /// <summary>
+    /// List of toys that can be stolen in area 4
+    /// </summary>
+    public List<GameObject> toysArea4;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -143,7 +165,6 @@ public class GameManager : MonoBehaviour
             player.SetActive(false); // Disable the player GameObject when in menu
             isSpawning = false; // Reset the spawning flag when in menu
             CancelInvoke("SpawnNPC"); // Stop invoking the SpawnNPC method if in menu
-            CancelInvoke("SpawnRoamingNPC"); // Stop invoking the SpawnRoamingNPC method if in menu
         }
         else
         {
@@ -153,13 +174,11 @@ public class GameManager : MonoBehaviour
             {
                 isSpawning = true; // Set the flag to true to prevent multiple coroutines
                 InvokeRepeating("SpawnNPC", 10f, 10f); // Start spawning NPCs at regular intervals
-                InvokeRepeating("SpawnRoamingNPC", 5f, 5f); // Start spawning roaming NPCs at regular intervals
             }
             if (currentNpcCount >= totalNpcToSpawn) // Stop spawning if the total number of NPCs has been reached
             {
                 isGameOver = true; // Set the game over flag to true
                 CancelInvoke("SpawnNPC"); // Stop invoking the SpawnNPC method
-                CancelInvoke("SpawnRoamingNPC"); // Stop invoking the SpawnRoamingNPC method
                 if (isGameOver && npcInGame == 0) // Check if the game is over and no NPCs are left
                 {
                     uiManager.GameOverCanvas.enabled = true; // Show the game over canvas if no NPCs are in the game
@@ -172,9 +191,10 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                Cursor.visible = false; // Hide the cursor when not in menu
-                Cursor.lockState = CursorLockMode.Locked; // Lock the cursor when not in menu
+                Cursor.visible = true; // Show the cursor when not in menu
+                Cursor.lockState = CursorLockMode.None; // Lock the cursor when not in menu
                 player.SetActive(true); // Enable the player GameObject when not in menu
+                mainCamera.enabled = true; // Enable the main camera when not in menu
             }
         }
         // Check if the player presses the Q key to go back to the main menu
@@ -182,10 +202,10 @@ public class GameManager : MonoBehaviour
         {
             uiManager.BackToMenu(); // Go back to the main menu when Q is pressed
         }
-        if (!isEscaping)
+        // update all current npc's toys list
+        foreach (Npc npc in FindObjectsOfType<Npc>())
         {
-            uiManager.popupText.enabled = false; // Hide the popup text UI element
-            StopCoroutine(ShowThiefEscapedCoroutine()); // Stop the thief escaped coroutine if it's running
+            npc.UpdateToysList();
         }
     }
 
@@ -209,12 +229,14 @@ public class GameManager : MonoBehaviour
     /// </summary>
     void SpawnNPC()
     {
-        GameObject newNpc = Instantiate(npcPrefab, spawnPoint.position, spawnPoint.rotation); // Instantiate a new NPC at the spawn point
+        GameObject randomAdult = adultNPCs[Random.Range(0, adultNPCs.Length)]; // Get a random adult NPC prefab
+        GameObject newNpc = Instantiate(randomAdult, spawnPoint.position, spawnPoint.rotation); // Instantiate a new NPC at the spawn point
         newNpc.GetComponent<Npc>().locations = locations; // Assign the locations to the NPC
         int randomChildCount = Random.Range(0, 2); // Randomly decide how many child NPCs to spawn (0 or 1)
         for (int i = 0; i < randomChildCount; i++)
         {
-            GameObject childnewNpc = Instantiate(npcchildPrefab, spawnPoint.position, spawnPoint.rotation); // Instantiate a new child NPC at the spawn point
+            GameObject randomChild = childNPCs[Random.Range(0, childNPCs.Length)]; // Get a random child NPC prefab
+            GameObject childnewNpc = Instantiate(randomChild, spawnPoint.position, spawnPoint.rotation); // Instantiate a new child NPC at the spawn point
             childnewNpc.GetComponent<Children>().target = newNpc.transform; // Set the target of the child NPC to the newly spawned NPC
             NavMeshAgent childNpcAgent = childnewNpc.GetComponent<NavMeshAgent>(); // Get the NavMeshAgent component of the child NPC
             childNpcAgent.speed = newNpc.GetComponent<NavMeshAgent>().speed; // Set the child's speed to match the parent's speed
@@ -222,17 +244,4 @@ public class GameManager : MonoBehaviour
         npcInGame++; // Increment the number of NPCs in the game
         currentNpcCount++; // Increment the current NPC count
     }
-    void SpawnRoamingNPC()
-    {
-        GameObject roamingNpc = Instantiate(roamingNPC, roamingNPCSpawn.position, roamingNPCSpawn.rotation); // Instantiate a roaming NPC at the spawn point
-    }
-    public IEnumerator ShowThiefEscapedCoroutine()
-    {
-        isEscaping = true;
-        uiManager.popupText.enabled = true; // Enable the popup text UI element
-        redDustEffect.Play(); // Play the red dust particle effect
-        yield return new WaitForSeconds(3f); // Wait for 3 seconds
-        uiManager.popupText.enabled = false; // Disable the popup text UI element after the wait
-        isEscaping = false;
-    }   
 }
