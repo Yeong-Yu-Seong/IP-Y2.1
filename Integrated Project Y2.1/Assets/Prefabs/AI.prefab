@@ -194,7 +194,7 @@ CapsuleCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.25
   m_Height: 2
@@ -242,6 +242,10 @@ MonoBehaviour:
   scoreValue: 1
   exitSound: {fileID: 8300000, guid: 56e0020567b66f449abdff892738ee39, type: 3}
   stealSound: {fileID: 8300000, guid: d0cde4b92bca5ba4282eb276c2f51c26, type: 3}
+  toysToStealArea1: []
+  toysToStealArea2: []
+  toysToStealArea3: []
+  toysToStealArea4: []
 --- !u!54 &-4514556116749984473
 Rigidbody:
   m_ObjectHideFlags: 0

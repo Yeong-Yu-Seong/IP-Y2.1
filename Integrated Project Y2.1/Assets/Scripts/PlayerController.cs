@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour
     /// <summary>
     /// Distance within which the player can interact with NPCs or objects
     /// </summary>
-    float interactionDistance = 5f;
+    float interactionDistance = 1f;
     /// <summary>
     /// Spawn point for NPCs
     /// </summary>
